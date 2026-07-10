@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Vault — CBT Practice Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B1220;
+    --panel:#121B2E;
+    --panel-2:#17223A;
+    --paper:#F0ECE0;
+    --paper-dim:#DCD6C4;
+    --signal:#FFB020;
+    --signal-dim:#8a611c;
+    --success:#2FD3C7;
+    --danger:#FF5D5D;
+    --marked:#A78BFA;
+    --line:#263354;
+    --text:#E8ECF4;
+    --text-dim:#93A0BE;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Space Grotesk',sans-serif;
+    letter-spacing:-0.01em;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  img,svg{display:block;}
+
+  /* subtle grid texture on the ink background */
+  .bg-grid{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px);
+    background-size:42px 42px;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+  }
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px; position:relative; z-index:1;}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(11,18,32,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 0;
+  }
+  .brand{display:flex; align-items:center; gap:10px;}
+  .brand-mark{
+    width:34px; height:34px; border-radius:8px;
+    background:linear-gradient(160deg, var(--signal), #d98d0c);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; color:var(--ink); font-size:16px;
+  }
+  .brand-name{font-weight:700; font-size:18px; line-height:1;}
+  .brand-sub{font-size:10.5px; color:var(--text-dim); letter-spacing:0.08em; text-transform:uppercase; margin-top:2px;}
+  .nav-links{display:flex; gap:30px; align-items:center;}
+  .nav-links a{font-size:14px; color:var(--text-dim); transition:color .15s;}
+  .nav-links a:hover{color:var(--text);}
+  .powered{
+    font-size:11px; color:var(--text-dim); border:1px solid var(--line);
+    padding:6px 12px; border-radius:100px; letter-spacing:0.03em;
+    display:flex; align-items:center; gap:6px;
+  }
+  .powered b{color:var(--signal); font-weight:600;}
+  .nav-cta{
+    background:var(--signal); color:#1a1206; padding:9px 18px; border-radius:8px;
+    font-weight:600; font-size:14px; border:none; cursor:pointer;
+  }
+  .mobile-toggle{display:none; background:none; border:none; color:var(--text); font-size:22px; cursor:pointer;}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:76px 0 60px; position:relative;}
+  .hero-grid{display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; color:var(--signal); text-transform:uppercase; letter-spacing:0.12em;
+    font-weight:600; margin-bottom:18px;
+  }
+  .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--signal); box-shadow:0 0 0 4px rgba(255,176,32,0.15);}
+  .hero h1{
+    font-size:clamp(34px,4.4vw,54px); line-height:1.05; font-weight:700; margin:0 0 20px;
+  }
+  .hero h1 span{color:var(--signal);}
+  .hero p.lede{font-size:16.5px; color:var(--text-dim); line-height:1.65; max-width:490px; margin:0 0 30px;}
+  .hero-actions{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--signal); color:#1a1206; padding:14px 26px; border-radius:9px;
+    font-weight:700; font-size:15px; border:none; cursor:pointer; transition:transform .15s, box-shadow .15s;
+    box-shadow:0 8px 24px -8px rgba(255,176,32,0.4);
+  }
+  .btn-primary:hover{transform:translateY(-2px);}
+  .btn-ghost{
+    background:transparent; color:var(--text); padding:14px 22px; border-radius:9px;
+    font-weight:600; font-size:15px; border:1px solid var(--line); cursor:pointer; transition:border-color .15s, background .15s;
+  }
+  .btn-ghost:hover{border-color:#3a4a72; background:var(--panel);}
+  .hero-stats{display:flex; gap:34px; margin-top:38px;}
+  .hero-stats div b{display:block; font-family:'Space Grotesk',sans-serif; font-size:24px; color:var(--text);}
+  .hero-stats div span{font-size:12px; color:var(--text-dim);}
+
+  /* admit-card visual */
+  .admit-card{
+    background:var(--paper); color:#1a1a1a; border-radius:16px; padding:26px 26px 22px;
+    position:relative; box-shadow:0 30px 60px -20px rgba(0,0,0,0.55);
+    transform:rotate(1.2deg);
+    border:1px solid var(--paper-dim);
+  }
+  .admit-card::before{
+    content:''; position:absolute; inset:8px; border:1.5px dashed #b9b09650; border-radius:10px; pointer-events:none;
+  }
+  .admit-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;}
+  .admit-top .label{font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:#6b6455;}
+  .admit-top .value{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; margin-top:3px;}
+  .admit-photo{
+    width:56px; height:68px; background:repeating-linear-gradient(135deg,#c9c2ab,#c9c2ab 4px,#d9d3bd 4px,#d9d3bd 8px);
+    border:1px solid #b9b096; border-radius:4px;
+  }
+  .admit-row{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid #d8d2be; font-size:13px;}
+  .admit-row .k{color:#6b6455;}
+  .admit-row .v{font-weight:600; font-family:'JetBrains Mono',monospace; font-size:12.5px;}
+  .admit-timer{
+    margin-top:16px; background:#1a1a1a; color:var(--success); border-radius:10px; padding:14px 16px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .admit-timer .tlabel{font-size:10px; color:#9aa; letter-spacing:0.1em; text-transform:uppercase;}
+  .admit-timer .tval{font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700; letter-spacing:0.05em;}
+  .admit-bubbles{display:flex; gap:6px; margin-top:14px;}
+  .bubble{width:16px; height:16px; border-radius:50%; border:1.5px solid #9d9678;}
+  .bubble.filled{background:#1a1a1a; border-color:#1a1a1a;}
+
+  /* ---------- SECTION HEAD ---------- */
+  .section{padding:88px 0;}
+  .section-head{max-width:600px; margin-bottom:48px;}
+  .section-head .eyebrow{margin-bottom:14px;}
+  .section-head h2{font-size:clamp(26px,3vw,36px); margin:0 0 12px; font-weight:700;}
+  .section-head p{color:var(--text-dim); font-size:15.5px; line-height:1.6; margin:0;}
+  .divider{height:1px; background:var(--line); border:none; margin:0;}
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:22px;}
+  .step{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:24px 20px;
+    position:relative;
+  }
+  .step .num{
+    font-family:'JetBrains Mono',monospace; color:var(--signal); font-size:12px; font-weight:700;
+    letter-spacing:0.05em;
+  }
+  .step h3{font-size:16px; margin:14px 0 8px; font-weight:600;}
+  .step p{font-size:13.5px; color:var(--text-dim); line-height:1.55; margin:0;}
+  .step-connector{
+    position:absolute; top:24px; right:-22px; width:22px; height:1px; background:var(--line);
+    display:none;
+  }
+  @media (min-width:900px){ .step-connector{display:block;} }
+
+  /* ---------- SUBJECTS ---------- */
+  .subject-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:16px;}
+  .subject-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:22px 18px; cursor:pointer; transition:border-color .18s, transform .18s, background .18s;
+  }
+  .subject-card:hover{border-color:var(--signal-dim); transform:translateY(-3px); background:var(--panel-2);}
+  .subject-card .icon{
+    width:38px; height:38px; border-radius:9px; display:flex; align-items:center; justify-content:center;
+    font-size:17px; margin-bottom:16px;
+  }
+  .subject-card h3{font-size:15px; margin:0 0 6px; font-weight:600;}
+  .subject-card .meta{font-size:12px; color:var(--text-dim); font-family:'JetBrains Mono',monospace;}
+  .subject-card .meta b{color:var(--text);}
+
+  /* ---------- PRACTICE / MOCK TEST ---------- */
+  .test-shell{
+    background:var(--panel); border:1px solid var(--line); border-radius:18px; overflow:hidden;
+  }
+  .test-topbar{
+    display:flex; align-items:center; justify-content:space-between; padding:16px 22px;
+    border-bottom:1px solid var(--line); background:var(--panel-2);
+  }
+  .test-topbar .ttitle{font-weight:600; font-size:14.5px; display:flex; align-items:center; gap:10px;}
+  .status-dot{width:8px; height:8px; border-radius:50%; background:var(--success); box-shadow:0 0 0 4px rgba(47,211,199,0.15);}
+  .timer-chip{
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px; color:var(--signal);
+    background:rgba(255,176,32,0.1); padding:7px 14px; border-radius:8px; letter-spacing:0.04em;
+  }
+  .timer-chip.warn{color:var(--danger); background:rgba(255,93,93,0.12);}
+
+  /* subject picker (pre-test) */
+  .picker{padding:40px 30px;}
+  .picker p.hint{color:var(--text-dim); font-size:14px; margin:0 0 22px;}
+  .chip-row{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:30px;}
+  .chip{
+    padding:10px 18px; border-radius:100px; border:1px solid var(--line); font-size:13.5px;
+    cursor:pointer; transition:all .15s; background:transparent; color:var(--text-dim); font-weight:500;
+  }
+  .chip.active{background:var(--signal); color:#1a1206; border-color:var(--signal); font-weight:700;}
+  .chip:hover:not(.active){border-color:#3a4a72; color:var(--text);}
+
+  .test-body{display:none; grid-template-columns:1fr 260px;}
+  .test-body.active{display:grid;}
+  .question-pane{padding:32px 34px; border-right:1px solid var(--line);}
+  .q-meta{display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;}
+  .q-tag{
+    font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-dim);
+    text-transform:uppercase; letter-spacing:0.06em;
+  }
+  .q-tag b{color:var(--signal);}
+  .diff-badge{
+    display:inline-block; padding:2px 9px; border-radius:100px; font-weight:700; font-size:10.5px;
+    text-transform:uppercase; letter-spacing:0.04em; vertical-align:middle;
+  }
+  .diff-badge.easy{background:rgba(47,211,199,0.15); color:var(--success);}
+  .diff-badge.medium{background:rgba(255,176,32,0.15); color:var(--signal);}
+  .diff-badge.hard{background:rgba(255,93,93,0.15); color:var(--danger);}
+  .mark-btn{
+    font-size:12.5px; color:var(--marked); background:rgba(167,139,250,0.1); border:1px solid rgba(167,139,250,0.3);
+    padding:6px 12px; border-radius:7px; cursor:pointer; font-weight:600;
+  }
+  .mark-btn.active{background:var(--marked); color:#1a1130; border-color:var(--marked);}
+  .q-text{font-size:18px; line-height:1.55; font-weight:500; margin:0 0 26px;}
+  .opt{
+    display:flex; align-items:flex-start; gap:13px; padding:14px 16px; border:1px solid var(--line);
+    border-radius:10px; margin-bottom:10px; cursor:pointer; transition:border-color .15s, background .15s;
+    font-size:14.5px;
+  }
+  .opt:hover{border-color:#3a4a72;}
+  .opt.selected{border-color:var(--signal); background:rgba(255,176,32,0.08);}
+  .opt .opt-key{
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12.5px; width:22px; height:22px;
+    border-radius:50%; border:1.5px solid var(--line); display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; margin-top:1px;
+  }
+  .opt.selected .opt-key{background:var(--signal); border-color:var(--signal); color:#1a1206;}
+  .q-nav{display:flex; justify-content:space-between; margin-top:28px;}
+  .nav-btn{
+    padding:11px 20px; border-radius:8px; font-size:13.5px; font-weight:600; cursor:pointer; border:1px solid var(--line);
+    background:transparent; color:var(--text);
+  }
+  .nav-btn:hover{border-color:#3a4a72;}
+  .nav-btn.primary{background:var(--signal); border-color:var(--signal); color:#1a1206;}
+  .nav-btn:disabled{opacity:0.35; cursor:not-allowed;}
+
+  .palette-pane{padding:28px 22px;}
+  .palette-pane h4{font-size:12.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-dim); margin:0 0 16px; font-weight:600;}
+  .palette-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:22px;}
+  .pnode{
+    aspect-ratio:1; border-radius:7px; border:1.5px solid var(--line); display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; cursor:pointer; color:var(--text-dim);
+    transition:transform .12s;
+  }
+  .pnode:hover{transform:scale(1.08);}
+  .pnode.current{border-color:var(--text); color:var(--text);}
+  .pnode.answered{background:var(--success); border-color:var(--success); color:#052825;}
+  .pnode.notanswered{background:var(--danger); border-color:var(--danger); color:#2a0808;}
+  .pnode.marked{background:var(--marked); border-color:var(--marked); color:#1a1130;}
+  .legend{font-size:12px; color:var(--text-dim); display:flex; align-items:center; gap:8px; margin-bottom:8px;}
+  .legend .sw{width:11px; height:11px; border-radius:3px; flex-shrink:0;}
+  .submit-btn{
+    width:100%; margin-top:14px; background:var(--danger); color:#fff; border:none; padding:13px; border-radius:9px;
+    font-weight:700; font-size:14px; cursor:pointer;
+  }
+
+  /* result */
+  .result-pane{display:none; padding:44px;}
+  .result-pane.active{display:block;}
+  .score-hero{display:flex; align-items:center; gap:36px; padding-bottom:32px; border-bottom:1px solid var(--line); margin-bottom:32px;}
+  .score-ring{
+    width:130px; height:130px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    background:conic-gradient(var(--success) calc(var(--pct)*1%), var(--line) 0);
+    position:relative;
+  }
+  .score-ring::before{content:''; position:absolute; inset:9px; border-radius:50%; background:var(--panel);}
+  .score-ring span{position:relative; font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:700;}
+  .result-stats{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
+  .rstat b{display:block; font-family:'JetBrains Mono',monospace; font-size:22px; margin-bottom:4px;}
+  .rstat span{font-size:12px; color:var(--text-dim);}
+  .review-item{border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin-bottom:10px;}
+  .review-item .rq{font-size:14.5px; font-weight:500; margin-bottom:8px;}
+  .review-item .ra{font-size:13px; color:var(--text-dim);}
+  .review-item .rex{font-size:12.5px; color:var(--text-dim); margin-top:8px; padding-top:8px; border-top:1px solid var(--line); line-height:1.5;}
+  .review-item .rex b{color:var(--text);}
+  .review-item.correct{border-left:3px solid var(--success);}
+  .review-item.incorrect{border-left:3px solid var(--danger);}
+  .retake{margin-top:24px;}
+
+  /* ---------- WHY / FEATURES ---------- */
+  .feat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .feat{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:26px 22px;}
+  .feat .fi{font-size:22px; margin-bottom:14px;}
+  .feat h3{font-size:15.5px; margin:0 0 8px; font-weight:600;}
+  .feat p{font-size:13.5px; color:var(--text-dim); line-height:1.6; margin:0;}
+
+  /* ---------- FOOTER ---------- */
+  footer{border-top:1px solid var(--line); padding:44px 0 32px;}
+  .foot-grid{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:24px;}
+  .foot-brand p{color:var(--text-dim); font-size:13px; max-width:280px; line-height:1.6; margin-top:10px;}
+  .foot-credit{
+    font-size:12.5px; color:var(--text-dim); display:flex; align-items:center; gap:8px;
+  }
+  .foot-credit b{color:var(--signal);}
+  .foot-bottom{
+    margin-top:34px; padding-top:22px; border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; font-size:12px; color:var(--text-dim); flex-wrap:wrap; gap:10px;
+  }
+
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr; gap:44px;}
+    .steps{grid-template-columns:1fr 1fr;}
+    .subject-grid{grid-template-columns:1fr 1fr;}
+    .feat-grid{grid-template-columns:1fr;}
+    .test-body.active{grid-template-columns:1fr;}
+    .palette-pane{border-top:1px solid var(--line);}
+    .nav-links{display:none;}
+    .mobile-toggle{display:block;}
+    .result-stats{grid-template-columns:1fr 1fr;}
+    .score-hero{flex-direction:column; align-items:flex-start; gap:20px;}
+  }
+  @media (max-width:600px){
+    .subject-grid{grid-template-columns:1fr;}
+    .steps{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+  :focus-visible{outline:2px solid var(--signal); outline-offset:2px;}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="brand">
+        <div class="brand-mark">SV</div>
+        <div>
+          <div class="brand-name">Study Vault</div>
+          <div class="brand-sub">CBT Practice Platform</div>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="#subjects">Courses</a>
+        <a href="#practice">Mock Test</a>
+        <a href="#how">How it works</a>
+        <a href="#why">Why Study Vault</a>
+      </div>
+      <div style="display:flex; align-items:center; gap:16px;">
+        <div class="powered">Powered by <b>Stunner Media</b></div>
+        <button class="mobile-toggle" aria-label="menu">☰</button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow"><span class="dot"></span>Session simulator, not a slideshow</div>
+        <h1>Practice the exam<br>the way you'll <span>actually sit it</span>.</h1>
+        <p class="lede">Study Vault reproduces the real Computer-Based Test screen — timer, question palette, mark-for-review — so exam day feels like round two, not round one.</p>
+        <div class="hero-actions">
+          <button class="btn-primary" onclick="scrollToPractice()">Start a mock test</button>
+          <a href="#subjects"><button class="btn-ghost">Browse courses</button></a>
+        </div>
+        <div class="hero-stats">
+          <div><b>5</b><span>Courses loaded</span></div>
+          <div><b>13</b><span>Practice questions loaded</span></div>
+          <div><b>10:00</b><span>Timed session</span></div>
+        </div>
+      </div>
+
+      <div class="admit-card">
+        <div class="admit-top">
+          <div>
+            <div class="label">Hall Ticket</div>
+            <div class="value">Study Vault — Mock Session</div>
+          </div>
+          <div class="admit-photo"></div>
+        </div>
+        <div class="admit-row"><span class="k">Candidate ID</span><span class="v">SV-2026-08841</span></div>
+        <div class="admit-row"><span class="k">Test</span><span class="v">GENERAL CBT — SET A</span></div>
+        <div class="admit-row"><span class="k">Courses</span><span class="v">MTH102 · CHM102 · PHY102</span></div>
+        <div class="admit-row" style="border-bottom:none;"><span class="k">Status</span><span class="v" style="color:#177a56;">READY</span></div>
+        <div class="admit-timer">
+          <div>
+            <div class="tlabel">Time remaining</div>
+            <div class="tval" id="heroClock">10:00</div>
+          </div>
+          <div class="admit-bubbles">
+            <div class="bubble filled"></div><div class="bubble filled"></div><div class="bubble"></div><div class="bubble"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow"><span class="dot"></span>How it works</div>
+      <h2>Four steps, same order every real CBT follows</h2>
+      <p>No accounts, no onboarding forms — pick a section and the clock starts, exactly like the exam server does on test day.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="num">01</div><h3>Choose a section</h3><p>Quant, Reasoning, English, Awareness or Computer Knowledge — practice one at a time or mix a full set.</p><div class="step-connector"></div></div>
+      <div class="step"><div class="num">02</div><h3>Clock starts</h3><p>A live countdown pins to the top bar. It doesn't pause when you switch questions — same as the real terminal.</p><div class="step-connector"></div></div>
+      <div class="step"><div class="num">03</div><h3>Answer or mark</h3><p>Select an option, mark a question for review, or skip it. The palette on the right tracks every state.</p><div class="step-connector"></div></div>
+      <div class="step"><div class="num">04</div><h3>Submit &amp; review</h3><p>Get your score instantly, with a question-by-question breakdown of what you got right and why.</p></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="subjects">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow"><span class="dot"></span>Courses</div>
+      <h2>Five courses, one exam pattern</h2>
+      <p>Every course below feeds the same mock-test engine — tap one to load it straight into the practice terminal.</p>
+    </div>
+    <div class="subject-grid">
+      <div class="subject-card" onclick="jumpToSubject('mth102')">
+        <div class="icon" style="background:rgba(255,176,32,0.14); color:var(--signal);">∑</div>
+        <h3>MTH102</h3>
+        <div class="meta"><b>3</b> questions loaded</div>
+      </div>
+      <div class="subject-card" onclick="jumpToSubject('chm102')">
+        <div class="icon" style="background:rgba(167,139,250,0.14); color:var(--marked);">⚗</div>
+        <h3>CHM102</h3>
+        <div class="meta"><b>3</b> questions loaded</div>
+      </div>
+      <div class="subject-card" onclick="jumpToSubject('phy102')">
+        <div class="icon" style="background:rgba(47,211,199,0.14); color:var(--success);">⚛</div>
+        <h3>PHY102</h3>
+        <div class="meta"><b>3</b> questions loaded</div>
+      </div>
+      <div class="subject-card" onclick="jumpToSubject('gst112')">
+        <div class="icon" style="background:rgba(255,93,93,0.14); color:var(--danger);">Aa</div>
+        <h3>GST112</h3>
+        <div class="meta"><b>2</b> questions loaded</div>
+      </div>
+      <div class="subject-card" onclick="jumpToSubject('bio112')">
+        <div class="icon" style="background:rgba(255,176,32,0.14); color:var(--signal);">❉</div>
+        <h3>BIO112</h3>
+        <div class="meta"><b>2</b> questions loaded</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="practice">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow"><span class="dot"></span>Mock test</div>
+      <h2>The practice terminal</h2>
+      <p>Pick a section below, or select "Full set" to run all 12 questions back to back under one ten-minute clock.</p>
+    </div>
+
+    <div class="test-shell">
+      <div class="test-topbar">
+        <div class="ttitle"><span class="status-dot"></span> <span id="topbarTitle">No session started</span></div>
+        <div class="timer-chip" id="timerChip" style="display:none;">10:00</div>
+      </div>
+
+      <div class="picker" id="pickerPane">
+        <p class="hint">Select a section to begin. The timer starts the moment your first question loads.</p>
+        <div class="chip-row" id="chipRow">
+          <button class="chip active" data-subject="all">Full set</button>
+          <button class="chip" data-subject="mth102">MTH102</button>
+          <button class="chip" data-subject="chm102">CHM102</button>
+          <button class="chip" data-subject="phy102">PHY102</button>
+          <button class="chip" data-subject="gst112">GST112</button>
+          <button class="chip" data-subject="bio112">BIO112</button>
+        </div>
+        <p class="hint" style="margin-bottom:14px;">How many questions? Easy, medium and very-hard questions are shuffled together.</p>
+        <div class="chip-row" id="countRow">
+          <button class="chip" data-count="10">10 questions</button>
+          <button class="chip active" data-count="20">20 questions</button>
+          <button class="chip" data-count="40">40 questions</button>
+          <button class="chip" data-count="60">60 questions</button>
+        </div>
+        <p class="hint" id="availabilityHint" style="margin-bottom:22px;"></p>
+        <button class="btn-primary" id="beginBtn">Begin test →</button>
+      </div>
+
+      <div class="test-body" id="testBody">
+        <div class="question-pane">
+          <div class="q-meta">
+            <div class="q-tag">Question <b id="qNum">1</b> of <span id="qTotal">12</span> · <span id="qSubjectLabel">Quant</span> · <span class="diff-badge" id="qDiff">Easy</span></div>
+            <button class="mark-btn" id="markBtn">Mark for review</button>
+          </div>
+          <p class="q-text" id="qText">Question text loads here.</p>
+          <div id="optList"></div>
+          <div class="q-nav">
+            <button class="nav-btn" id="prevBtn">← Previous</button>
+            <button class="nav-btn primary" id="nextBtn">Save &amp; Next →</button>
+          </div>
+        </div>
+        <div class="palette-pane">
+          <h4>Question palette</h4>
+          <div class="palette-grid" id="paletteGrid"></div>
+          <div class="legend"><div class="sw" style="background:var(--success);"></div>Answered</div>
+          <div class="legend"><div class="sw" style="background:var(--danger);"></div>Not answered</div>
+          <div class="legend"><div class="sw" style="background:var(--marked);"></div>Marked for review</div>
+          <div class="legend"><div class="sw" style="background:transparent; border:1.5px solid var(--line);"></div>Not visited</div>
+          <button class="submit-btn" id="submitBtn">Submit test</button>
+        </div>
+      </div>
+
+      <div class="result-pane" id="resultPane">
+        <div class="score-hero">
+          <div class="score-ring" id="scoreRing" style="--pct:0;"><span id="scorePct">0%</span></div>
+          <div class="result-stats" style="flex:1;">
+            <div class="rstat"><b id="rCorrect" style="color:var(--success);">0</b><span>Correct</span></div>
+            <div class="rstat"><b id="rWrong" style="color:var(--danger);">0</b><span>Incorrect</span></div>
+            <div class="rstat"><b id="rSkipped" style="color:var(--text-dim);">0</b><span>Skipped</span></div>
+            <div class="rstat"><b id="rTime" class="mono">00:00</b><span>Time used</span></div>
+          </div>
+        </div>
+        <h3 style="font-size:16px; margin-bottom:16px;">Answer review</h3>
+        <div id="reviewList"></div>
+        <button class="btn-primary retake" id="retakeBtn">Take another set</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="why">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow"><span class="dot"></span>Why Study Vault</div>
+      <h2>Built to match the exam server, not a study app</h2>
+      <p>Most practice sites give you a quiz. Study Vault gives you the interface muscle memory — the palette, the clock, the submit-confirmation reflex.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat"><div class="fi">⏱</div><h3>Real countdown behaviour</h3><p>The clock runs from your first question and doesn't pause on tab switch — same pressure as the actual test window.</p></div>
+      <div class="feat"><div class="fi">▦</div><h3>Authentic question palette</h3><p>Jump to any question directly from the grid. Colour states track answered, skipped and marked-for-review exactly like the exam UI.</p></div>
+      <div class="feat"><div class="fi">✓</div><h3>Instant, honest scoring</h3><p>No waiting on a server. Your score, timing and a full answer key appear the second you submit.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="brand"><div class="brand-mark">SV</div><div class="brand-name">Study Vault</div></div>
+        <p>A CBT-style practice terminal for exam aspirants. Sit the mock the same way you'll sit the real thing.</p>
+      </div>
+      <div class="foot-credit">Powered by <b>Stunner Media</b></div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Study Vault. All rights reserved.</span>
+      <span>Built &amp; powered by Stunner Media.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---------- Hero decorative clock (not the real test timer) ----------
+  (function heroClock(){
+    let t = 600;
+    const el = document.getElementById('heroClock');
+    setInterval(()=>{
+      t = t > 0 ? t - 1 : 600;
+      const m = String(Math.floor(t/60)).padStart(2,'0');
+      const s = String(t%60).padStart(2,'0');
+      el.textContent = m+':'+s;
+    },1000);
+  })();
+
+  function scrollToPractice(){ document.getElementById('practice').scrollIntoView({behavior:'smooth'}); }
+  function jumpToSubject(subj){
+    document.getElementById('practice').scrollIntoView({behavior:'smooth'});
+    document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active', c.dataset.subject===subj));
+  }
+
+  // ---------- Question bank ----------
+  const BANK = [
+    {subject:'mth102', label:'MTH102', difficulty:'easy', q:'What is the derivative of f(x) = 3x\u00b2 + 5x with respect to x?', options:['6x + 5','3x + 5','6x','x\u00b2 + 5'], answer:0, explanation:'By the power rule, d/dx(3x\u00b2) = 6x and d/dx(5x) = 5, so f\u2019(x) = 6x + 5.'},
+    {subject:'mth102', label:'MTH102', difficulty:'easy', q:'Evaluate the integral \u222b 2x dx.', options:['x\u00b2 + C','2x\u00b2 + C','x + C','2 + C'], answer:0, explanation:'Using the power rule for integration, \u222b2x dx = 2\u00b7(x\u00b2/2) + C = x\u00b2 + C.'},
+    {subject:'mth102', label:'MTH102', difficulty:'medium', q:'If a 2\u00d72 matrix has determinant 0, the matrix is said to be:', options:['Invertible','Singular','Symmetric','Orthogonal'], answer:1, explanation:'A square matrix with determinant zero has no inverse and is called singular.'},
+    {subject:'chm102', label:'CHM102', difficulty:'easy', q:'What is the pH of a neutral aqueous solution at 25\u00b0C?', options:['0','7','14','1'], answer:1, explanation:'Pure water at 25\u00b0C has a pH of 7, the midpoint of the 0\u201314 scale, which is defined as neutral.'},
+    {subject:'chm102', label:'CHM102', difficulty:'easy', q:'Which sub-atomic particle carries a negative charge?', options:['Proton','Neutron','Electron','Positron'], answer:2, explanation:'The electron carries a negative elementary charge; the proton is positive and the neutron is neutral.'},
+    {subject:'chm102', label:'CHM102', difficulty:'medium', q:'The process by which a solid changes directly to a gas is called:', options:['Evaporation','Sublimation','Condensation','Deposition'], answer:1, explanation:'Sublimation is the direct solid-to-gas transition without passing through the liquid phase.'},
+    {subject:'gst112', label:'GST112', difficulty:'easy', q:'Choose the correctly spelled word.', options:['Occassion','Ocassion','Occaision','Occasion'], answer:3, explanation:'The correct spelling is "Occasion" \u2014 one c, one s.'},
+    {subject:'gst112', label:'GST112', difficulty:'medium', q:'Which of the following best describes a "thesis statement" in an essay?', options:['A list of references','The main argument or claim of the essay','A summary of the introduction','A grammatical rule'], answer:1, explanation:'A thesis statement expresses the central claim or argument that the rest of the essay supports.'},
+    {subject:'bio112', label:'BIO112', difficulty:'easy', q:'Which organelle is known as the "powerhouse of the cell"?', options:['Nucleus','Ribosome','Mitochondrion','Golgi apparatus'], answer:2, explanation:'The mitochondrion generates most of a cell\u2019s ATP through respiration, earning this nickname.'},
+    {subject:'bio112', label:'BIO112', difficulty:'easy', q:'The basic structural and functional unit of life is the:', options:['Tissue','Cell','Organ','Organism'], answer:1, explanation:'The cell is the smallest unit capable of carrying out all basic life processes on its own.'},
+
+    // ===== PHY102: General Physics II (Electricity & Magnetism) =====
+    // -- Electric Charge & Coulomb's Law --
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'Which of the following particles carries a negative electric charge?', options:['Proton','Neutron','Electron','Positron'], answer:2, explanation:'The electron has a negative elementary charge of magnitude 1.602\u00d710^-19 C; protons are positive and neutrons are neutral.'},
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'What is the SI unit of electric charge?', options:['Ampere','Coulomb','Volt','Farad'], answer:1, explanation:'Electric charge is measured in coulombs (C) in the SI system.'},
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'Like charges ___ each other, while unlike charges ___ each other.', options:['attract; attract','repel; attract','repel; repel','attract; repel'], answer:1, explanation:'Charges of the same sign repel, and charges of opposite sign attract \u2014 the basic rule of electrostatics.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'Two point charges of +2 \u03bcC and +4 \u03bcC are separated by 0.3 m in vacuum. What is the magnitude of the electrostatic force between them? (k = 8.99\u00d710^9 N\u00b7m\u00b2/C\u00b2)', options:['0.80 N','8.0 N','0.080 N','80 N'], answer:0, explanation:'F = kq\u2081q\u2082/r\u00b2 = (8.99\u00d710^9 \u00d7 2\u00d710^-6 \u00d7 4\u00d710^-6) / 0.3\u00b2 \u2248 0.80 N.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'The elementary charge e has an approximate value of:', options:['1.602\u00d710^-19 C','9.11\u00d710^-31 C','6.02\u00d710^23 C','8.85\u00d710^-12 C'], answer:0, explanation:'1.602\u00d710^-19 C is the magnitude of the charge on a single electron or proton \u2014 the elementary charge.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'By what factor does the electrostatic force between two point charges change if the distance between them is tripled?', options:['1/3','1/9','3','9'], answer:1, explanation:'Coulomb\u2019s law gives F \u221d 1/r\u00b2, so tripling r reduces the force to 1/3\u00b2 = 1/9 of its original value.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'Two identical positive charges +q are fixed a distance 2a apart. A small positive test charge sits on the perpendicular bisector, a distance a from the midpoint. In what direction does the net electrostatic force on the test charge point?', options:['Toward one of the fixed charges','Away from the midpoint, along the bisector','Toward the midpoint, along the bisector','It is exactly zero'], answer:1, explanation:'By symmetry the components of the two forces along the line joining the charges cancel, while the components along the bisector add \u2014 pushing the test charge further away along the bisector.'},
+
+    // -- Electric Field & Dipole --
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'Electric field lines around an isolated positive point charge point:', options:['Toward the charge','Away from the charge','In circles around the charge','They form no pattern'], answer:1, explanation:'Field lines always point away from positive charges and toward negative charges.'},
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'The SI unit of electric field strength is:', options:['N/C','C/N','N\u00b7C','C\u00b7m'], answer:0, explanation:'Electric field is force per unit charge, so its SI unit is newtons per coulomb (N/C).'},
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'An electric dipole consists of:', options:['Two charges of the same sign separated by a distance','Two equal and opposite charges separated by a small distance','A single point charge','A uniformly charged conducting sphere'], answer:1, explanation:'A dipole is defined by two equal-magnitude charges of opposite sign separated by a fixed small distance.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'A point charge of +5 \u03bcC produces an electric field. What is the magnitude of the field at a point 0.2 m away? (k = 8.99\u00d710^9 N\u00b7m\u00b2/C\u00b2)', options:['1.12\u00d710^6 N/C','1.12\u00d710^5 N/C','2.25\u00d710^5 N/C','4.5\u00d710^7 N/C'], answer:0, explanation:'E = kq/r\u00b2 = (8.99\u00d710^9 \u00d7 5\u00d710^-6)/0.2\u00b2 \u2248 1.12\u00d710^6 N/C.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'For a uniform electric field between two oppositely charged parallel plates, the field lines are:', options:['Curved and converging','Straight, parallel and equally spaced','Circular','Random and scattered'], answer:1, explanation:'A parallel-plate capacitor produces a uniform field, represented by straight, evenly spaced, parallel field lines.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'An electric dipole is placed in a uniform external electric field. The net force on the dipole is:', options:['Always zero, regardless of orientation','Maximum when aligned with the field','Directed perpendicular to the field','Proportional to the square of the dipole moment'], answer:0, explanation:'The equal and opposite charges feel equal and opposite forces in a uniform field, so the net force is always zero (though a net torque can exist).'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'A dipole of moment p is placed in a uniform electric field E, at angle \u03b8 to the field. Which expression gives the magnitude of the torque on the dipole?', options:['\u03c4 = pE cos\u03b8','\u03c4 = pE sin\u03b8','\u03c4 = pE\u03b8','\u03c4 = pE'], answer:1, explanation:'Torque on a dipole is \u03c4 = p \u00d7 E, whose magnitude is pE sin\u03b8.'},
+
+    // -- Gauss's Law --
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'Gauss\u2019s law relates:', options:['Electric flux through a closed surface to the enclosed charge','Magnetic flux to current','Electric potential to distance','Capacitance to charge'], answer:0, explanation:'Gauss\u2019s law states that the net electric flux through any closed surface equals the enclosed charge divided by \u03b5\u2080.'},
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'The SI unit of electric flux is:', options:['N\u00b7m\u00b2/C','C/m\u00b2','N/C','Wb'], answer:0, explanation:'Electric flux is the field integrated over an area, giving units of N\u00b7m\u00b2/C.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'A closed surface encloses a net charge of zero. According to Gauss\u2019s law, the net electric flux through the surface is:', options:['Zero','Maximum','Equal to \u03b5\u2080','Undefined'], answer:0, explanation:'Net flux depends only on enclosed charge; zero enclosed charge means zero net flux, even if the field is nonzero on the surface.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'A solid spherical conductor carries a net charge Q and is in electrostatic equilibrium. The electric field inside the conductor is:', options:['Zero everywhere inside','Equal to kQ/r\u00b2 everywhere inside','Maximum at the center','Equal to the field at the surface'], answer:0, explanation:'In electrostatic equilibrium, all excess charge resides on the surface of a conductor, leaving the field inside exactly zero.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'A long straight wire carries a uniform linear charge density \u03bb. Using Gauss\u2019s law with a cylindrical surface, the electric field at distance r from the wire is proportional to:', options:['1/r','1/r\u00b2','r','r\u00b2'], answer:0, explanation:'For a line charge, E = \u03bb/(2\u03c0\u03b5\u2080r), so the field falls off as 1/r, not 1/r\u00b2 as for a point charge.'},
+
+    // -- Electric Potential --
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'Electric potential is a ___ quantity, while electric field is a ___ quantity.', options:['vector; vector','vector; scalar','scalar; vector','scalar; scalar'], answer:2, explanation:'Potential has magnitude only (scalar); electric field has both magnitude and direction (vector).'},
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'The SI unit of electric potential is the:', options:['Volt','Watt','Joule','Coulomb'], answer:0, explanation:'Electric potential is measured in volts (V), equivalent to joules per coulomb.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'How much work is done in moving a charge of 2 C through a potential difference of 5 V?', options:['2.5 J','10 J','0.4 J','7 J'], answer:1, explanation:'W = qV = 2 C \u00d7 5 V = 10 J.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'The electric potential at distance r from an isolated point charge is V = kq/r. If the distance is doubled, the potential:', options:['Doubles','Halves','Quadruples','Remains unchanged'], answer:1, explanation:'V is inversely proportional to r, so doubling r halves the potential.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'An equipotential surface is one on which:', options:['The electric field is strongest','The potential has the same value at every point','Charge density is uniform','Field lines converge'], answer:1, explanation:'By definition, every point on an equipotential surface has the same electric potential; no work is done moving a charge along it.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'Two point charges, +q at x = 0 and \u2212q at x = d, form a dipole. What is the electric potential exactly midway between them (taking V = 0 at infinity)?', options:['Positive','Negative','Zero','Cannot be determined'], answer:2, explanation:'At the midpoint both charges are equidistant, so their potential contributions kq/(d/2) and \u2212kq/(d/2) exactly cancel, giving V = 0.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'A proton is released from rest in a uniform field and accelerates through a potential drop of 1000 V. Approximately how much kinetic energy does it gain?', options:['1000 eV','500 eV','2000 eV','1 eV'], answer:0, explanation:'For a particle with charge e, KE gained in eV equals the potential drop in volts, so it gains 1000 eV.'},
+
+    // -- Capacitance --
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'Capacitance is defined as the ratio of:', options:['Charge to potential difference','Potential difference to charge','Energy to charge','Charge to current'], answer:0, explanation:'By definition, C = Q/V \u2014 charge stored per unit of potential difference.'},
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'The SI unit of capacitance is the:', options:['Farad','Henry','Ohm','Tesla'], answer:0, explanation:'Capacitance is measured in farads (F), named after Michael Faraday.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'A parallel-plate capacitor has capacitance C\u2080. If the plate separation is doubled while the area stays the same, the new capacitance is:', options:['2C\u2080','C\u2080/2','4C\u2080','C\u2080'], answer:1, explanation:'C = \u03b5\u2080A/d, so doubling d halves the capacitance.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'A 4 \u03bcF capacitor is charged to a potential difference of 12 V. How much charge does it store?', options:['48 \u03bcC','3 \u03bcC','0.33 \u03bcC','480 \u03bcC'], answer:0, explanation:'Q = CV = 4 \u03bcF \u00d7 12 V = 48 \u03bcC.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'Two capacitors of 3 \u03bcF and 6 \u03bcF are connected in series. What is their equivalent capacitance?', options:['2 \u03bcF','9 \u03bcF','4.5 \u03bcF','18 \u03bcF'], answer:0, explanation:'For series capacitors, 1/C = 1/3 + 1/6 = 1/2, so C = 2 \u03bcF.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'The energy stored in a capacitor is U = Q\u00b2/(2C). If the charge on the capacitor is doubled while C stays constant, the stored energy:', options:['Doubles','Halves','Quadruples','Stays the same'], answer:2, explanation:'Since U \u221d Q\u00b2, doubling Q multiplies the stored energy by 2\u00b2 = 4.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'A charged parallel-plate capacitor is disconnected from its battery, then a dielectric slab is inserted between the plates. What happens to its charge Q and voltage V?', options:['Q stays the same; V decreases','Q increases; V stays the same','Q stays the same; V increases','Both Q and V decrease'], answer:0, explanation:'With no path for charge to escape, Q is fixed. Since C increases when the dielectric is inserted and V = Q/C, V must decrease.'},
+
+    // -- Current & Resistance --
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'Electric current is defined as the rate of flow of:', options:['Electric charge','Electric field','Potential difference','Resistance'], answer:0, explanation:'Current I = dQ/dt \u2014 the amount of charge passing a point per unit time.'},
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'According to Ohm\u2019s law, at constant temperature, the current through a conductor is:', options:['Directly proportional to voltage','Inversely proportional to voltage','Independent of voltage','Proportional to the square of voltage'], answer:0, explanation:'Ohm\u2019s law states V = IR, so at constant R, current is directly proportional to voltage.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'A conductor has a resistance of 10 \u03a9 and carries a current of 2 A. What is the voltage across it?', options:['20 V','5 V','0.2 V','12 V'], answer:0, explanation:'V = IR = 2 A \u00d7 10 \u03a9 = 20 V.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'The resistance of a wire depends on all of the following EXCEPT:', options:['Length','Cross-sectional area','Resistivity of the material','Current flowing through it'], answer:3, explanation:'For an ohmic conductor, R = \u03c1L/A depends on geometry and material, not on the current flowing through it.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'If the length of a wire is doubled and its cross-sectional area is halved, its resistance becomes:', options:['4 times','2 times','Half','Unchanged'], answer:0, explanation:'R = \u03c1L/A; doubling L and halving A each double the resistance, so overall R increases by a factor of 4.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'The resistivity of most metallic conductors:', options:['Decreases as temperature increases','Increases as temperature increases','Is independent of temperature','Depends only on wire length'], answer:1, explanation:'In metals, increased thermal vibration of the lattice increases electron scattering, so resistivity rises with temperature.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'A cylindrical wire is stretched uniformly (volume unchanged) so its length doubles. Its new resistance, compared to the original R, is:', options:['4R','2R','R/2','8R'], answer:0, explanation:'Doubling L halves the cross-sectional area A (constant volume), so R = \u03c1L/A increases by a factor of 2 \u00d7 2 = 4.'},
+
+    // -- DC Circuits / Kirchhoff's Laws --
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'Kirchhoff\u2019s current law is based on the conservation of:', options:['Electric charge','Energy','Momentum','Mass'], answer:0, explanation:'The sum of currents into a junction equals the sum out, reflecting conservation of charge.'},
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'Kirchhoff\u2019s voltage law states that the sum of potential differences around any closed loop is:', options:['Zero','Equal to the total resistance','Equal to the total current','Always positive'], answer:0, explanation:'This follows from conservation of energy \u2014 a charge returning to its starting point in a loop has no net change in potential.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'Two resistors of 4 \u03a9 and 6 \u03a9 are connected in series across a 20 V battery. What is the current in the circuit?', options:['2 A','5 A','0.5 A','10 A'], answer:0, explanation:'I = V/(R\u2081+R\u2082) = 20/(4+6) = 2 A.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'Three resistors of 2 \u03a9, 3 \u03a9 and 6 \u03a9 are connected in parallel. What is their equivalent resistance?', options:['1 \u03a9','11 \u03a9','0.09 \u03a9','6 \u03a9'], answer:0, explanation:'1/R = 1/2 + 1/3 + 1/6 = 6/6 = 1, so R = 1 \u03a9.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'In a simple RC charging circuit, the time constant \u03c4 is given by:', options:['\u03c4 = RC','\u03c4 = R/C','\u03c4 = C/R','\u03c4 = 1/(RC)'], answer:0, explanation:'The time constant of an RC circuit is the product of resistance and capacitance, \u03c4 = RC.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'In an RC circuit with R = 2 k\u03a9 and C = 5 \u03bcF, how long does it take the capacitor voltage to reach about 63% of the source voltage after the switch closes?', options:['10 ms','1 ms','100 ms','63 ms'], answer:0, explanation:'63% charge is reached after exactly one time constant: \u03c4 = RC = 2000 \u00d7 5\u00d710^-6 = 0.01 s = 10 ms.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'A battery of EMF 12 V and internal resistance 1 \u03a9 is connected to an external resistor of 5 \u03a9. What is the terminal voltage of the battery?', options:['10 V','12 V','2 V','6 V'], answer:0, explanation:'I = EMF/(R+r) = 12/6 = 2 A. Terminal voltage = EMF \u2212 Ir = 12 \u2212 (2)(1) = 10 V.'},
+
+    // -- Magnetic Fields & Force --
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'The SI unit of magnetic field (flux density) is the:', options:['Tesla','Weber','Henry','Farad'], answer:0, explanation:'Magnetic field strength is measured in tesla (T) in SI units.'},
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'The magnetic force on a moving charge is given by:', options:['F = qv \u00d7 B','F = qE','F = qBv, direction unspecified','F = q/B'], answer:0, explanation:'The magnetic force is the vector cross product qv \u00d7 B, always perpendicular to both velocity and field.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'A charged particle moves through crossed electric and magnetic fields without deflecting. This happens when:', options:['The electric force balances the magnetic force','Only the electric field acts','Only the magnetic field acts','The particle has zero mass'], answer:0, explanation:'This is the principle of a velocity selector: qE and qvB are equal and opposite, so the net force is zero.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'A proton moving with velocity v enters a magnetic field B directed perpendicular to v. The proton\u2019s path becomes:', options:['A straight line','A parabola','A circle','An outward spiral'], answer:2, explanation:'Since the magnetic force is always perpendicular to velocity, it provides centripetal force, producing uniform circular motion.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'If a charged particle moves parallel to a magnetic field, the magnetic force on it is:', options:['Maximum','Zero','Equal to qvB','Directed opposite to velocity'], answer:1, explanation:'F = qvB sin\u03b8; when v is parallel to B, \u03b8 = 0 and sin\u03b8 = 0, so the force is zero.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'A proton moves in a circle of radius r in a uniform magnetic field B perpendicular to its velocity. If its speed is doubled while B stays fixed, the new radius is:', options:['2r','r/2','4r','r'], answer:0, explanation:'r = mv/(qB), so radius is directly proportional to speed; doubling v doubles r.'},
+
+    // -- Magnetic Field due to Currents (Ampere's Law, Biot-Savart) --
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'Ampere\u2019s law relates the magnetic field around a closed loop to:', options:['The current enclosed by the loop','The voltage across the loop','The capacitance of the loop','The resistance of the loop'], answer:0, explanation:'Ampere\u2019s law states that the line integral of B around a closed loop equals \u03bc\u2080 times the enclosed current.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'The magnetic field at a distance r from a long straight current-carrying wire is:', options:['Directly proportional to r','Inversely proportional to r','Inversely proportional to r\u00b2','Independent of r'], answer:1, explanation:'B = \u03bc\u2080I/(2\u03c0r), so the field decreases as 1/r with distance from the wire.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'A long straight wire carries a current of 5 A. What is the magnitude of the magnetic field 0.1 m from the wire? (\u03bc\u2080 = 4\u03c0\u00d710^-7 T\u00b7m/A)', options:['1\u00d710^-5 T','1\u00d710^-6 T','1\u00d710^-4 T','5\u00d710^-5 T'], answer:0, explanation:'B = \u03bc\u2080I/(2\u03c0r) = (4\u03c0\u00d710^-7 \u00d7 5)/(2\u03c0 \u00d7 0.1) = 1\u00d710^-5 T.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'Inside a long, tightly wound solenoid carrying current I, the magnetic field is:', options:['Zero everywhere inside','Uniform and directed along the axis','Strongest at the ends','Directed radially outward'], answer:1, explanation:'A long ideal solenoid produces a nearly uniform field parallel to its axis inside its windings.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'Two long parallel wires carry currents in the same direction. The wires will:', options:['Attract each other','Repel each other','Exert no force on each other','Exert force only if currents are equal'], answer:0, explanation:'Parallel currents flowing in the same direction attract; if they flowed in opposite directions, they would repel.'},
+
+    // -- Electromagnetic Induction --
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'Faraday\u2019s law of electromagnetic induction states that an induced EMF is produced by:', options:['A changing magnetic flux through a circuit','A constant magnetic field','A changing electric charge alone','A constant current'], answer:0, explanation:'Faraday\u2019s law: EMF = \u2212N(d\u03a6/dt) \u2014 induced EMF arises only when magnetic flux through a circuit changes.'},
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'Lenz\u2019s law is ultimately a statement of conservation of:', options:['Energy','Charge','Momentum','Mass'], answer:0, explanation:'Lenz\u2019s law says induced current opposes the change that produced it, consistent with energy conservation.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'A coil of 100 turns experiences a flux change from 0.02 Wb to 0.06 Wb in 0.5 s. What is the magnitude of the induced EMF?', options:['8 V','4 V','0.08 V','800 V'], answer:0, explanation:'EMF = N(\u0394\u03a6/\u0394t) = 100 \u00d7 (0.04/0.5) = 8 V.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'According to Lenz\u2019s law, the direction of an induced current always opposes:', options:['The change in magnetic flux that produced it','The direction of the applied EMF','The resistance of the circuit','The direction of the magnetic field'], answer:0, explanation:'The induced current creates its own magnetic field that opposes the change in flux causing it \u2014 not the flux itself.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'The self-inductance of a coil depends mainly on:', options:['Its number of turns and geometry','Only the current flowing through it','Only the resistance of the coil','The voltage applied across it'], answer:0, explanation:'Inductance is a geometric property, determined by the coil\u2019s turns, shape and core material, not by the instantaneous current or voltage.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'A coil with inductance L = 2 H carries a current changing at 3 A/s. What is the magnitude of the self-induced EMF?', options:['6 V','1.5 V','0.67 V','5 V'], answer:0, explanation:'EMF = L(dI/dt) = 2 H \u00d7 3 A/s = 6 V.'},
+
+    // -- AC Circuits / Oscillations --
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'In an AC circuit, the current and voltage:', options:['Vary sinusoidally with time','Remain constant','Only flow in one direction','Have zero frequency'], answer:0, explanation:'Alternating current is defined by voltage and current that vary sinusoidally, reversing direction periodically.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'The reactance of a pure inductor in an AC circuit:', options:['Increases with frequency','Decreases with frequency','Is independent of frequency','Is always zero'], answer:0, explanation:'Inductive reactance X_L = \u03c9L = 2\u03c0fL, so it grows as frequency increases.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'The reactance of a pure capacitor in an AC circuit:', options:['Increases with frequency','Decreases with frequency','Is constant regardless of frequency','Always equals R'], answer:1, explanation:'Capacitive reactance X_C = 1/(\u03c9C), so it decreases as frequency increases.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'In a series RLC circuit driven at its resonance frequency:', options:['Inductive and capacitive reactances are equal, and impedance is minimum','Impedance is at its maximum value','Current in the circuit is zero','Resistance becomes zero'], answer:0, explanation:'At resonance X_L = X_C, so they cancel, leaving impedance equal to R \u2014 its minimum possible value, which maximizes current.'},
+
+    // -- Maxwell's Equations --
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'Maxwell\u2019s equations are a set of four equations that describe:', options:['Electric and magnetic fields and their sources','Only electric fields','Only magnetic fields','Purely mechanical forces'], answer:0, explanation:'Maxwell\u2019s four equations unify electricity and magnetism, relating E and B fields to charges, currents and each other.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'The Ampere\u2013Maxwell law modifies Ampere\u2019s law by adding a term for:', options:['The displacement current from a changing electric field','A changing magnetic field','A changing gravitational field','Steady current only'], answer:0, explanation:'Maxwell added a "displacement current" term (\u03b5\u2080 d\u03a6_E/dt) to account for magnetic fields produced by a changing electric field, even with no real current.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'Which of Maxwell\u2019s equations directly implies that isolated magnetic monopoles do not exist?', options:['Gauss\u2019s law for magnetism','Gauss\u2019s law for electricity','Faraday\u2019s law','Ampere\u2013Maxwell law'], answer:0, explanation:'Gauss\u2019s law for magnetism states the net magnetic flux through any closed surface is always zero, meaning magnetic field lines never end \u2014 there are no magnetic monopoles.'},
+
+    // -- Electromagnetic Waves --
+    {subject:'phy102', label:'PHY102', difficulty:'easy', q:'Electromagnetic waves are produced by:', options:['Accelerating electric charges','Charges at rest','Only magnets','Gravitational fields'], answer:0, explanation:'A charge must accelerate to radiate electromagnetic waves; a stationary or uniformly moving charge does not.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'In an electromagnetic wave traveling through vacuum, the electric field E and magnetic field B are:', options:['Perpendicular to each other and to the direction of propagation','Parallel to each other','Parallel to the direction of propagation','Always zero'], answer:0, explanation:'EM waves are transverse: E, B and the direction of propagation are all mutually perpendicular.'},
+    {subject:'phy102', label:'PHY102', difficulty:'medium', q:'The speed of an electromagnetic wave in vacuum is related to the permittivity \u03b5\u2080 and permeability \u03bc\u2080 by:', options:['c = 1/\u221a(\u03b5\u2080\u03bc\u2080)','c = \u03b5\u2080\u03bc\u2080','c = \u221a(\u03b5\u2080/\u03bc\u2080)','c = \u03b5\u2080/\u03bc\u2080'], answer:0, explanation:'Maxwell\u2019s equations predict c = 1/\u221a(\u03b5\u2080\u03bc\u2080), which matches the measured speed of light.'},
+    {subject:'phy102', label:'PHY102', difficulty:'hard', q:'Radio waves, visible light, and X-rays differ mainly in their:', options:['Wavelength and frequency','Speed in vacuum','Fundamental nature (only light is electromagnetic)','Direction of travel'], answer:0, explanation:'All are electromagnetic waves traveling at the same speed c in vacuum; they differ only in wavelength and frequency across the spectrum.'},
+  ];
+
+  // ---------- Test engine ----------
+  let session = null; // {questions, answers, marked, current, secondsLeft, timerId, startedAt}
+  let selectedCount = 20;
+
+  function countFor(subjectKey){
+    return subjectKey === 'all' ? BANK.length : BANK.filter(q=>q.subject===subjectKey).length;
+  }
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  // Fill in dynamic counts on load: homepage subject cards, chip labels, hero stat
+  function initCounts(){
+    document.querySelectorAll('.subject-card').forEach(card=>{
+      const match = card.getAttribute('onclick').match(/jumpToSubject\('(\w+)'\)/);
+      if(!match) return;
+      const n = countFor(match[1]);
+      const metaB = card.querySelector('.meta b');
+      if(metaB) metaB.textContent = n;
+    });
+    const allChip = document.querySelector('#chipRow .chip[data-subject="all"]');
+    if(allChip) allChip.textContent = `Full set (${BANK.length})`;
+    const heroQCount = document.querySelectorAll('.hero-stats div b')[1];
+    if(heroQCount) heroQCount.textContent = BANK.length;
+    updateAvailabilityHint();
+  }
+
+  function updateAvailabilityHint(){
+    const activeChip = chipRow.querySelector('.chip.active');
+    const subj = activeChip ? activeChip.dataset.subject : 'all';
+    const available = countFor(subj);
+    const hint = document.getElementById('availabilityHint');
+    if(selectedCount > available){
+      hint.textContent = `Only ${available} question${available===1?'':'s'} available in this selection \u2014 your test will use all of them.`;
+    } else {
+      hint.textContent = `${selectedCount} of ${available} available questions will be selected at random.`;
+    }
+  }
+
+  const chipRow = document.getElementById('chipRow');
+  chipRow.addEventListener('click', (e)=>{
+    const chip = e.target.closest('.chip');
+    if(!chip) return;
+    chipRow.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    updateAvailabilityHint();
+  });
+
+  const countRow = document.getElementById('countRow');
+  countRow.addEventListener('click', (e)=>{
+    const chip = e.target.closest('.chip');
+    if(!chip) return;
+    countRow.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    selectedCount = parseInt(chip.dataset.count, 10);
+    updateAvailabilityHint();
+  });
+
+  document.getElementById('beginBtn').addEventListener('click', ()=>{
+    const activeChip = chipRow.querySelector('.chip.active');
+    const subj = activeChip ? activeChip.dataset.subject : 'all';
+    const pool = subj === 'all' ? BANK.slice() : BANK.filter(q=>q.subject===subj);
+    const shuffled = shuffle(pool);
+    const questions = shuffled.slice(0, Math.min(selectedCount, shuffled.length));
+    startSession(questions);
+  });
+
+  function startSession(questions){
+    session = {
+      questions,
+      answers: new Array(questions.length).fill(null),
+      marked: new Array(questions.length).fill(false),
+      visited: new Array(questions.length).fill(false),
+      current: 0,
+      secondsLeft: Math.max(600, questions.length * 45),
+      startedAt: Date.now(),
+    };
+    document.getElementById('pickerPane').style.display = 'none';
+    document.getElementById('testBody').classList.add('active');
+    document.getElementById('resultPane').classList.remove('active');
+    document.getElementById('timerChip').style.display = 'inline-block';
+    document.getElementById('qTotal').textContent = questions.length;
+    document.getElementById('topbarTitle').textContent = 'Session in progress';
+    buildPalette();
+    renderQuestion();
+    if(session.timerId) clearInterval(session.timerId);
+    session.timerId = setInterval(tickTimer, 1000);
+  }
+
+  function tickTimer(){
+    if(!session) return;
+    session.secondsLeft--;
+    const chip = document.getElementById('timerChip');
+    const m = String(Math.floor(session.secondsLeft/60)).padStart(2,'0');
+    const s = String(session.secondsLeft%60).padStart(2,'0');
+    chip.textContent = m+':'+s;
+    chip.classList.toggle('warn', session.secondsLeft <= 60);
+    if(session.secondsLeft <= 0){
+      clearInterval(session.timerId);
+      submitTest();
+    }
+  }
+
+  function buildPalette(){
+    const grid = document.getElementById('paletteGrid');
+    grid.innerHTML = '';
+    session.questions.forEach((q,i)=>{
+      const node = document.createElement('div');
+      node.className = 'pnode';
+      node.textContent = i+1;
+      node.addEventListener('click', ()=>{ session.current = i; renderQuestion(); });
+      grid.appendChild(node);
+    });
+  }
+
+  function refreshPalette(){
+    const nodes = document.querySelectorAll('.pnode');
+    nodes.forEach((node,i)=>{
+      node.classList.remove('current','answered','notanswered','marked');
+      if(i === session.current) node.classList.add('current');
+      if(session.marked[i]) node.classList.add('marked');
+      else if(session.answers[i] !== null) node.classList.add('answered');
+      else if(session.visited[i]) node.classList.add('notanswered');
+    });
+  }
+
+  function renderQuestion(){
+    const i = session.current;
+    const q = session.questions[i];
+    session.visited[i] = true;
+    document.getElementById('qNum').textContent = i+1;
+    document.getElementById('qSubjectLabel').textContent = q.label;
+    const diffEl = document.getElementById('qDiff');
+    const diff = q.difficulty || 'medium';
+    diffEl.textContent = diff === 'hard' ? 'Very Hard' : diff.charAt(0).toUpperCase()+diff.slice(1);
+    diffEl.className = 'diff-badge ' + diff;
+    document.getElementById('qText').textContent = q.q;
+    const optList = document.getElementById('optList');
+    optList.innerHTML = '';
+    q.options.forEach((opt, idx)=>{
+      const div = document.createElement('div');
+      div.className = 'opt' + (session.answers[i] === idx ? ' selected' : '');
+      div.innerHTML = `<div class="opt-key">${String.fromCharCode(65+idx)}</div><div>${opt}</div>`;
+      div.addEventListener('click', ()=>{
+        session.answers[i] = idx;
+        renderQuestion();
+      });
+      optList.appendChild(div);
+    });
+    const markBtn = document.getElementById('markBtn');
+    markBtn.classList.toggle('active', session.marked[i]);
+    markBtn.textContent = session.marked[i] ? 'Marked ✓' : 'Mark for review';
+    document.getElementById('prevBtn').disabled = i === 0;
+    document.getElementById('nextBtn').textContent = i === session.questions.length - 1 ? 'Save & Finish' : 'Save & Next →';
+    refreshPalette();
+  }
+
+  document.getElementById('markBtn').addEventListener('click', ()=>{
+    session.marked[session.current] = !session.marked[session.current];
+    renderQuestion();
+  });
+  document.getElementById('prevBtn').addEventListener('click', ()=>{
+    if(session.current > 0){ session.current--; renderQuestion(); }
+  });
+  document.getElementById('nextBtn').addEventListener('click', ()=>{
+    if(session.current < session.questions.length - 1){ session.current++; renderQuestion(); }
+    else { submitTest(); }
+  });
+  document.getElementById('submitBtn').addEventListener('click', ()=>{
+    if(confirm('Submit the test now? You cannot change answers after this.')) submitTest();
+  });
+
+  function submitTest(){
+    if(!session) return;
+    if(session.timerId) clearInterval(session.timerId);
+    let correct=0, wrong=0, skipped=0;
+    const reviewList = document.getElementById('reviewList');
+    reviewList.innerHTML = '';
+    session.questions.forEach((q,i)=>{
+      const given = session.answers[i];
+      let stateClass = 'correct';
+      let ansText;
+      if(given === null){
+        skipped++; stateClass='incorrect';
+        ansText = `Not attempted. Correct answer: ${q.options[q.answer]}`;
+      } else if(given === q.answer){
+        correct++; stateClass='correct';
+        ansText = `Your answer: ${q.options[given]} — Correct`;
+      } else {
+        wrong++; stateClass='incorrect';
+        ansText = `Your answer: ${q.options[given]} — Correct answer: ${q.options[q.answer]}`;
+      }
+      const item = document.createElement('div');
+      item.className = 'review-item ' + stateClass;
+      const exp = q.explanation ? `<div class="rex"><b>Why:</b> ${q.explanation}</div>` : '';
+      item.innerHTML = `<div class="rq">Q${i+1}. [${q.label}] ${q.q}</div><div class="ra">${ansText}</div>${exp}`;
+      reviewList.appendChild(item);
+    });
+
+    const total = session.questions.length;
+    const pct = Math.round((correct/total)*100);
+    const elapsed = Math.round((Date.now() - session.startedAt)/1000);
+    const em = String(Math.floor(elapsed/60)).padStart(2,'0');
+    const es = String(elapsed%60).padStart(2,'0');
+
+    document.getElementById('scoreRing').style.setProperty('--pct', pct);
+    document.getElementById('scorePct').textContent = pct + '%';
+    document.getElementById('rCorrect').textContent = correct;
+    document.getElementById('rWrong').textContent = wrong;
+    document.getElementById('rSkipped').textContent = skipped;
+    document.getElementById('rTime').textContent = em+':'+es;
+
+    document.getElementById('testBody').classList.remove('active');
+    document.getElementById('timerChip').style.display = 'none';
+    document.getElementById('resultPane').classList.add('active');
+    document.getElementById('topbarTitle').textContent = 'Session complete';
+  }
+
+  document.getElementById('retakeBtn').addEventListener('click', ()=>{
+    document.getElementById('resultPane').classList.remove('active');
+    document.getElementById('pickerPane').style.display = 'block';
+    document.getElementById('topbarTitle').textContent = 'No session started';
+    session = null;
+  });
+
+  initCounts();
+</script>
+
+</body>
+</html>
