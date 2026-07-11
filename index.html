@@ -467,7 +467,7 @@
         <h3>GST112</h3>
         <div class="meta"><b>2</b> questions loaded</div>
       </div>
-      <div class="subject-card" onclick="jumpToSubject('bio112')">
+      <div class="subject-card" onclick="jumpToSubject('bio102')">
         <div class="icon" style="background:rgba(255,176,32,0.14); color:var(--signal);">❉</div>
         <h3>BIO112</h3>
         <div class="meta"><b>2</b> questions loaded</div>
@@ -505,7 +505,7 @@
           <button class="chip" data-subject="chm102">CHM102</button>
           <button class="chip" data-subject="phy102">PHY102</button>
           <button class="chip" data-subject="gst112">GST112</button>
-          <button class="chip" data-subject="bio112">BIO112</button>
+          <button class="chip" data-subject="bio102">BIO102</button>
           <button class="chip" data-subject="bot102">BOT102</button>
         </div>
         <p class="hint" style="margin-bottom:14px;">How many questions? Easy, medium and very-hard questions are shuffled together.</p>
@@ -615,9 +615,45 @@
 
   // ---------- Question bank ----------
   const BANK = [
-    {subject:'mth102', label:'MTH102', difficulty:'easy', q:'What is the derivative of f(x) = 3x\u00b2 + 5x with respect to x?', options:['6x + 5','3x + 5','6x','x\u00b2 + 5'], answer:0, explanation:'By the power rule, d/dx(3x\u00b2) = 6x and d/dx(5x) = 5, so f\u2019(x) = 6x + 5.'},
-    {subject:'mth102', label:'MTH102', difficulty:'easy', q:'Evaluate the integral \u222b 2x dx.', options:['x\u00b2 + C','2x\u00b2 + C','x + C','2 + C'], answer:0, explanation:'Using the power rule for integration, \u222b2x dx = 2\u00b7(x\u00b2/2) + C = x\u00b2 + C.'},
-    {subject:'mth102', label:'MTH102', difficulty:'medium', q:'If a 2\u00d72 matrix has determinant 0, the matrix is said to be:', options:['Invertible','Singular','Symmetric','Orthogonal'], answer:1, explanation:'A square matrix with determinant zero has no inverse and is called singular.'},
+  {subject:'bio102',label:'BIO102',difficulty:'easy',q:'The basic structural and functional unit of life is the:',options:['Cell','Tissue','Organ','Organism'],answer:0,explanation:'The cell is the smallest unit capable of carrying out all life processes.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'medium',q:'Which organelle is responsible for ATP production in eukaryotic cells?',options:['Mitochondrion','Nucleus','Golgi apparatus','Ribosome'],answer:0,explanation:'Mitochondria generate ATP through cellular respiration.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'hard',q:'Which phase of mitosis involves chromosome alignment at the equatorial plate?',options:['Metaphase','Prophase','Anaphase','Telophase'],answer:0,explanation:'During metaphase, chromosomes align along the equator before separation.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'very hard',q:'The enzyme RuBisCO catalyzes which reaction during photosynthesis?',options:['Carbon fixation','ATP synthesis','Photolysis of water','Glucose oxidation'],answer:0,explanation:'RuBisCO catalyzes the fixation of carbon dioxide in the Calvin cycle.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'easy',q:'Which pigment gives plants their green colour?',options:['Chlorophyll','Carotene','Xanthophyll','Anthocyanin'],answer:0,explanation:'Chlorophyll is the primary green pigment used in photosynthesis.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'medium',q:'The movement of water across a selectively permeable membrane is known as:',options:['Osmosis','Diffusion','Active transport','Translocation'],answer:0,explanation:'Osmosis is the movement of water from a region of high water potential to low water potential.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'hard',q:'Which tissue transports manufactured food in flowering plants?',options:['Phloem','Xylem','Cambium','Epidermis'],answer:0,explanation:'Phloem transports sugars and other organic nutrients throughout the plant.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'easy',q:'Which kingdom includes bacteria?',options:['Monera','Protista','Fungi','Plantae'],answer:0,explanation:'In the traditional five-kingdom system, bacteria belong to Kingdom Monera.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'very hard',q:'Which plant hormone primarily promotes cell elongation?',options:['Auxin','Ethylene','Abscisic acid','Cytokinin'],answer:0,explanation:'Auxin stimulates cell elongation, especially in stems.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'medium',q:'The loss of water vapour from aerial parts of plants is called:',options:['Transpiration','Respiration','Guttation','Photosynthesis'],answer:0,explanation:'Transpiration is the evaporation of water through stomata and other plant surfaces.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'easy',q:'Which of the following is the primary site of photosynthesis?',options:['Leaf','Root','Stem','Flower'],answer:0,explanation:'Leaves contain numerous chloroplasts where photosynthesis occurs.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'medium',q:'Which part of the microscope controls the amount of light entering the specimen?',options:['Iris diaphragm','Eyepiece','Objective lens','Stage'],answer:0,explanation:'The iris diaphragm regulates the amount of light passing through the specimen.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'hard',q:'Which phase of meiosis is characterized by crossing over between homologous chromosomes?',options:['Prophase I','Metaphase I','Anaphase II','Telophase II'],answer:0,explanation:'Crossing over occurs during Prophase I, increasing genetic variation.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'very hard',q:'Which photosynthetic pathway minimizes photorespiration in maize?',options:['C4 pathway','C3 pathway','CAM pathway','Calvin pathway'],answer:0,explanation:'Maize is a C4 plant, using the Hatch-Slack pathway to reduce photorespiration.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'easy',q:'Which of these is a prokaryotic organism?',options:['Escherichia coli','Amoeba','Yeast','Spirogyra'],answer:0,explanation:'Escherichia coli is a bacterium and therefore a prokaryote.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'medium',q:'Which organelle packages proteins for secretion?',options:['Golgi apparatus','Mitochondrion','Nucleus','Chloroplast'],answer:0,explanation:'The Golgi apparatus modifies, packages and secretes proteins.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'hard',q:'Which plant tissue is mainly responsible for secondary growth?',options:['Vascular cambium','Epidermis','Phloem','Cortex'],answer:0,explanation:'The vascular cambium produces secondary xylem and phloem, increasing stem diameter.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'easy',q:'Which cell organelle contains the genetic material?',options:['Nucleus','Ribosome','Golgi apparatus','Lysosome'],answer:0,explanation:'The nucleus contains DNA in eukaryotic cells.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'very hard',q:'The oxygen released during photosynthesis originates from:',options:['Water','Carbon dioxide','Glucose','Chlorophyll'],answer:0,explanation:'Photolysis splits water molecules, releasing oxygen gas.'},
+
+{subject:'bio102',label:'BIO102',difficulty:'medium',q:'Which of the following is an example of a vascular plant?',options:['Fern','Spirogyra','Chlamydomonas','Nostoc'],answer:0,explanation:'Ferns possess xylem and phloem, making them vascular plants.'},
     // ===== CHM102: Introductory Chemistry II =====
     // -- Qualitative Inorganic Analysis --
     {subject:'chm102', label:'CHM102', difficulty:'easy', q:'Which flame test colour is characteristic of sodium ions?', options:['Bright yellow','Lilac/violet','Brick red','Blue-green'], answer:0, explanation:'Sodium salts give a distinctive bright yellow flame, visible even in trace amounts.'},
