@@ -949,7 +949,50 @@
 {subject:'mth102',label:'MTH102',difficulty:'hard',q:'Which theorem guarantees that a continuous function on a closed interval attains both a maximum and a minimum value?',options:['Extreme Value Theorem','Mean Value Theorem','Rolle’s Theorem','Intermediate Value Theorem'],answer:0,explanation:'The Extreme Value Theorem guarantees both absolute maximum and minimum values on a closed interval.'},
 
 {subject:'mth102',label:'MTH102',difficulty:'very hard',q:'If y=e^(2x²), then dy/dx equals:',options:['4xe^(2x²)','2e^(2x²)','2xe^(2x²)','e^(2x²)'],answer:0,explanation:'Apply the chain rule: derivative of 2x² is 4x, giving 4xe^(2x²).'}
-    // ===== CHM102: Introductory Chemistry II =====
+
+  {subject:'mth102',label:'MTH102',difficulty:'easy',q:'The derivative of e^x is:',options:['e^x','xe^(x)','1','x'],answer:0,explanation:'The exponential function e^x is unique because its derivative is itself.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'medium',q:'Evaluate ∫e^x dx.',options:['e^x+C','xe^x+C','lnx+C','1/e^x+C'],answer:0,explanation:'The exponential function e^x is its own antiderivative.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'hard',q:'Find the derivative of y=√x.',options:['1/(2√x)','√x/2','2√x','1/√x'],answer:0,explanation:'Rewrite √x as x^(1/2) and apply the power rule.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'very hard',q:'Evaluate lim(x→0)(1−cosx)/x².',options:['1/2','0','1','2'],answer:0,explanation:'This is a standard trigonometric limit equal to 1/2.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'easy',q:'The slope of the graph y=5x−3 is:',options:['5','−3','3','−5'],answer:0,explanation:'In the equation y=mx+c, the coefficient of x is the slope.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'medium',q:'Find the derivative of y=x⁷.',options:['7x⁶','6x⁷','7x⁷','x⁶'],answer:0,explanation:'Using the power rule, differentiate by multiplying by the exponent and reducing the power by one.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'hard',q:'Evaluate ∫(1/x)dx.',options:['ln|x|+C','1/x²+C','xlnx+C','e^x+C'],answer:0,explanation:'The integral of 1/x is the natural logarithm of the absolute value of x.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'very hard',q:'Differentiate y=ln(sinx).',options:['cotx','tanx','sec²x','csc²x'],answer:0,explanation:'Using the chain rule, d/dx[ln(u)]=u′/u=(cosx)/(sinx)=cotx.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'easy',q:'Which rule is used to differentiate x⁸?',options:['Power rule','Product rule','Chain rule','Quotient rule'],answer:0,explanation:'The power rule is applied when differentiating powers of x.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'medium',q:'The derivative of tanx is:',options:['sec²x','csc²x','secx','cotx'],answer:0,explanation:'The standard derivative of tanx is sec²x.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'hard',q:'Find the derivative of y=(5x−2)/(x+1).',options:['7/(x+1)²','5/(x+1)','7x/(x+1)²','5(x+1)'],answer:0,explanation:'Using the quotient rule gives [(5)(x+1)−(5x−2)]/(x+1)²=7/(x+1)².'},
+
+{subject:'mth102',label:'MTH102',difficulty:'very hard',q:'Evaluate ∫₁²x³dx.',options:['15/4','4','8','16'],answer:0,explanation:'The antiderivative is x⁴/4. Evaluating from 1 to 2 gives (16−1)/4=15/4.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'easy',q:'A function that passes the vertical line test is:',options:['A function','Not continuous','Not differentiable','A relation only'],answer:0,explanation:'The vertical line test determines whether a graph represents a function.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'medium',q:'Which of the following functions has no real zeros?',options:['x²+1','x²−1','x−1','x³'],answer:0,explanation:'Since x²≥0 for all real x, x²+1 is always positive.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'hard',q:'The derivative of y=sin²x is:',options:['2sinxcosx','cos²x','2cosx','sin2x'],answer:0,explanation:'Apply the chain rule: d/dx[(sinx)²]=2sinxcosx.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'very hard',q:'Find d/dx[xlnx].',options:['lnx+1','lnx','1/x','xlnx'],answer:0,explanation:'Apply the product rule: d/dx[xlnx]=lnx+x(1/x)=lnx+1.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'easy',q:'The graph of y=|x| has the shape of the letter:',options:['V','U','W','L'],answer:0,explanation:'The absolute value function forms a V-shaped graph.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'medium',q:'Evaluate lim(x→2)(x²+4x−4).',options:['8','4','12','16'],answer:0,explanation:'Since polynomials are continuous, substitute x=2 directly to obtain 4+8−4=8.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'hard',q:'If f′(x)<0 on an interval, the function is:',options:['Decreasing','Increasing','Constant','Undefined'],answer:0,explanation:'A negative derivative indicates that the function decreases throughout the interval.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'very hard',q:'The area bounded by y=2x, the x-axis and x=3 is:',options:['9 square units','6 square units','18 square units','12 square units'],answer:0,explanation:'Area=∫₀³2x dx=[x²]₀³=9 square units.'},
+
+{subject:'mth102',label:'MTH102',difficulty:'medium',q:'Which of the following is a removable discontinuity?',options:['A hole in the graph','A vertical asymptote','A jump discontinuity','An oscillating discontinuity'],answer:0,explanation:'A removable discontinuity occurs when the limit exists but the function value is missing or different.'}
+  
+  // ===== CHM102: Introductory Chemistry II =====
     // -- Qualitative Inorganic Analysis --
     {subject:'chm102', label:'CHM102', difficulty:'easy', q:'Which flame test colour is characteristic of sodium ions?', options:['Bright yellow','Lilac/violet','Brick red','Blue-green'], answer:0, explanation:'Sodium salts give a distinctive bright yellow flame, visible even in trace amounts.'},
     {subject:'chm102', label:'CHM102', difficulty:'easy', q:'Cations that form insoluble chlorides (the 1st analytical group: Ag\u207a, Hg\u2082\u00b2\u207a, Pb\u00b2\u207a) are best separated using:', options:['Dilute hydrochloric acid','Dilute sulfuric acid','Sodium hydroxide','Ammonium hydroxide'], answer:0, explanation:'Dilute HCl precipitates Ag\u207a, Hg\u2082\u00b2\u207a and Pb\u00b2\u207a as insoluble white chlorides, separating them as the 1st group.'},
